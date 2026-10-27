@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title">نظام إدارة السوبرماركت المتكامل | Supermarket Management System</title>
+    <!-- Google Fonts: Cairo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Application Stylesheet -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <!-- 1. LOGIN OVERLAY SCREEN -->
+    <div class="login-overlay" id="login-overlay">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="login-brand-icon" id="login-brand-icon">
+                    <i class="fas fa-store-alt"></i>
+                </div>
+                <h2 id="login-title-text">تسجيل الدخول للنظام</h2>
+                <p id="login-subtitle-text">سوبرماركت السعادة الحديث - اختر دورك أو أدخل بياناتك</p>
+            </div>
+            <div class="login-body">
+                <!-- Quick Demo Login Selection -->
+                <div style="margin-bottom: 0.75rem;">
+                    <label style="font-size: 0.8rem; font-weight: 700; color: #64748b;" id="lbl-quick-login">دخول تجريبي سريع ومباشر بنقرة واحدة:</label>
+                </div>
+                <div class="quick-roles-grid">
+                    <div class="quick-role-card" onclick="quickLogin('admin')">
+                        <i class="fas fa-user-shield" style="color: #4f46e5;"></i>
+                        <span>المدير (Admin)</span>
+                    </div>
+                    <div class="quick-role-card" onclick="quickLogin('cashier1')">
+                        <i class="fas fa-cash-register" style="color: #2563eb;"></i>
+                        <span>الكاشير (نهاري)</span>
+                    </div>
+                    <div class="quick-role-card" onclick="quickLogin('customer1')">
+                        <i class="fas fa-shopping-bag" style="color: #10b981;"></i>
+                        <span>عميل (Customer)</span>
+                    </div>
+                </div>
+
+                <div style="display: flex; align-items: center; margin: 1.25rem 0; color: #94a3b8; font-size: 0.8rem;">
+                    <div style="flex: 1; height: 1px; background: #e2e8f0;"></div>
+                    <span style="padding: 0 10px;">أو تسجيل الدخول اليدوي</span>
+                    <div style="flex: 1; height: 1px; background: #e2e8f0;"></div>
+                </div>
+
+                <!-- Custom Login Form -->
+                <form id="login-form" onsubmit="handleManualLogin(event)">
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label id="lbl-login-username">اسم المستخدم أو البريد الإلكتروني <span style="color:red">*</span></label>
+                        <div style="position: relative;">
+                            <i class="fas fa-user" style="position: absolute; top: 12px; right: 12px; color: #94a3b8;"></i>
+                            <input type="text" id="login-username" placeholder="admin أو cashier1 أو customer1" style="padding-right: 36px;" required>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1.25rem;">
+                        <label id="lbl-login-password">كلمة المرور <span style="color:red">*</span></label>
+                        <div style="position: relative;">
+                            <i class="fas fa-lock" style="position: absolute; top: 12px; right: 12px; color: #94a3b8;"></i>
+                            <input type="password" id="login-password" placeholder="••••••" style="padding-right: 36px;" required>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-primary" style="width: 100%; padding: 12px; font-size: 1rem; justify-content: center;" id="btn-login-submit">
+                        <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+                    </button>
+                </form>
+
+                <!-- Register New Customer Trigger -->
+                <div style="text-align: center; margin-top: 1.25rem; font-size: 0.85rem;">
+                    <span style="color: #64748b;">ليس لديك حساب عميل؟</span>
+                    <button type="button" onclick="openRegisterCustomerModal()" style="background: none; border: none; color: #2563eb; font-weight: 700; cursor: pointer; text-decoration: underline; margin-right: 4px;" id="btn-open-register">
+                        إنشاء حساب عميل جديد
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. REGISTER NEW CUSTOMER MODAL -->
+    <div class="modal-overlay" id="register-customer-modal">
+        <div class="modal-card" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-plus" style="color: #10b981;"></i> <span id="reg-modal-title">تسجيل حساب عميل جديد</span></h3>
+                <button class="modal-close" onclick="closeRegisterCustomerModal()">&times;</button>
+            </div>
+            <form onsubmit="handleRegisterCustomer(event)">
+                <div class="modal-body">
+                    <div class="form-group" style="margin-bottom: 0.75rem;">
+                        <label>الاسم الكامل <span style="color:red">*</span></label>
+                        <input type="text" id="reg-name" placeholder="مثال: عبد الله السالم" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.75rem;">
+                        <label>اسم المستخدم (Username) <span style="color:red">*</span></label>
+                        <input type="text" id="reg-username" placeholder="مثال: abdullah" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.75rem;">
+                        <label>البريد الإلكتروني <span style="color:red">*</span></label>
+                        <input type="email" id="reg-email" placeholder="client@example.com" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.75rem;">
+                        <label>كلمة المرور <span style="color:red">*</span></label>
+                        <input type="password" id="reg-password" placeholder="••••••" required>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0.75rem;">
+                        <label>رقم الهاتف / الجوال</label>
+                        <input type="tel" id="reg-phone" placeholder="05xxxxxxxx">
+                    </div>
+                    <div class="form-group">
+                        <label>العنوان</label>
+                        <input type="text" id="reg-address" placeholder="المدينة، الحي...">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeRegisterCustomerModal()">إلغاء</button>
+                    <button type="submit" class="btn-primary">
+                        <i class="fas fa-check"></i> تأكيد وإنشاء الحساب
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 3. TOPBAR / HEADER -->
+    <header class="topbar">
+        <div class="topbar-container">
+            <a href="#" class="brand">
+                <div class="brand-icon" id="topbar-logo-icon">
+                    <i class="fas fa-store-alt"></i>
+                </div>
+                <div class="brand-title">
+                    <h1 id="topbar-brand-name">سوبرماركت السعادة الحديث</h1>
+                    <p id="topbar-brand-desc">نظام متكامل لإدارة المبيعات، المخزون، ونقاط البيع (SQL Server 2025)</p>
+                </div>
+            </a>
+
+            <!-- Shift Indicator & Switcher for Cashier/Admin -->
+            <div id="topbar-shift-container" style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-size: 0.8rem; color: #64748b; font-weight: 700;">الشفت:</span>
+                <button type="button" class="shift-badge day" id="btn-toggle-shift" onclick="toggleShift()" title="اضغط لتبديل وقت الشفت">
+                    <i class="fas fa-sun"></i> <span id="shift-label-text">شفت نهاري</span>
+                </button>
+            </div>
+
+            <!-- Current User Profile & Actions -->
+            <div class="top-actions">
+                <div class="user-profile-chip" id="user-profile-chip">
+                    <div class="user-avatar" id="header-user-avatar">A</div>
+                    <div class="user-info-text">
+                        <span class="user-info-name" id="header-user-name">أحمد المدير</span>
+                        <span class="badge info user-info-role" id="header-user-role">المدير (Admin)</span>
+                    </div>
+                </div>
+
+                <!-- Customer Cart Toggle (Visible mainly for Customer/Store) -->
+                <button class="cart-toggle-btn" id="header-cart-btn" onclick="toggleCartDrawer()">
+                    <i class="fas fa-shopping-cart"></i> <span id="nav-lbl-cart">سلة المشتريات</span>
+                    <span class="cart-badge" id="cart-badge-count">0</span>
+                </button>
+
+                <!-- Logout Button -->
+                <button class="btn-logout" onclick="handleLogout()" title="تسجيل الخروج والعودة لشاشة الدخول">
+                    <i class="fas fa-sign-out-alt"></i> <span id="btn-lbl-logout">خروج</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- 4. MAIN NAVIGATION TABS (DRAFTED PER ROLE) -->
+    <nav class="main-nav">
+        <ul class="nav-tabs" id="nav-tabs-list">
+            <!-- 1. Dashboard (Admin) -->
+            <li id="tab-li-dashboard">
+                <button class="nav-tab-btn active" id="nav-tab-dashboard" data-target="tab-dashboard">
+                    <i class="fas fa-chart-pie"></i> <span id="nav-text-dashboard">لوحة التحكم</span>
+                </button>
+            </li>
+            <!-- 2. Sales Movement & Analytics (Admin & Cashier) -->
+            <li id="tab-li-sales">
+                <button class="nav-tab-btn" id="nav-tab-sales" data-target="tab-sales">
+                    <i class="fas fa-chart-line"></i> <span id="nav-text-sales">حركة المبيعات</span>
+                </button>
+            </li>
+            <!-- 3. Customer Store (Customer & All) -->
+            <li id="tab-li-store">
+                <button class="nav-tab-btn" id="nav-tab-store" data-target="tab-store">
+                    <i class="fas fa-store"></i> <span id="nav-text-store">متجر التسوق</span>
+                </button>
+            </li>
+            <!-- 4. POS Cashier (Cashier & Admin) -->
+            <li id="tab-li-pos">
+                <button class="nav-tab-btn" id="nav-tab-pos" data-target="tab-pos">
+                    <i class="fas fa-cash-register"></i> <span id="nav-text-pos">نقطة البيع (الكاشير)</span>
+                </button>
+            </li>
+            <!-- 5. Products Entry & Pricing (Admin / Permitted) -->
+            <li id="tab-li-products">
+                <button class="nav-tab-btn" id="nav-tab-products" data-target="tab-products">
+                    <i class="fas fa-boxes"></i> <span id="nav-text-products">إدارة وتصنيف الأصناف</span>
+                </button>
+            </li>
+            <!-- 6. Inventory Stock & Audit (Admin / Permitted) -->
+            <li id="tab-li-inventory">
+                <button class="nav-tab-btn" id="nav-tab-inventory" data-target="tab-inventory">
+                    <i class="fas fa-clipboard-list"></i> <span id="nav-text-inventory">جرد المخزون</span>
+                </button>
+            </li>
+            <!-- 7. Orders & Invoices (Admin, Cashier, Customer) -->
+            <li id="tab-li-orders">
+                <button class="nav-tab-btn" id="nav-tab-orders" data-target="tab-orders">
+                    <i class="fas fa-receipt"></i> <span id="nav-text-orders">فواتير المبيعات</span>
+                </button>
+            </li>
+            <!-- 8. Users & Permissions Management (Admin only) -->
+            <li id="tab-li-users">
+                <button class="nav-tab-btn" id="nav-tab-users" data-target="tab-users">
+                    <i class="fas fa-users-cog"></i> <span id="nav-text-users">المستخدمين والصلاحيات</span>
+                </button>
+            </li>
+            <!-- 9. System Settings (Admin only) -->
+            <li id="tab-li-settings">
+                <button class="nav-tab-btn" id="nav-tab-settings" data-target="tab-settings">
+                    <i class="fas fa-sliders-h"></i> <span id="nav-text-settings">إعدادات النظام</span>
+                </button>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- 5. MAIN CONTENT PANES -->
+    <main class="container">
+
+        <!-- TAB 1: DASHBOARD (ADMIN) -->
+        <section class="tab-pane active" id="tab-dashboard">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon green"><i class="fas fa-coins"></i></div>
+                    <div class="stat-info">
+                        <h3>إجمالي المبيعات المحققة</h3>
+                        <div class="stat-value" id="stat-total-sales">0.00 ج.م</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon blue"><i class="fas fa-file-invoice-dollar"></i></div>
+                    <div class="stat-info">
+                        <h3>عدد الفواتير الصادرة</h3>
+                        <div class="stat-value" id="stat-orders-count">0</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon amber"><i class="fas fa-box-open"></i></div>
+                    <div class="stat-info">
+                        <h3>الأصناف المتوفرة بالمخزن</h3>
+                        <div class="stat-value" id="stat-products-count">0</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon red"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div class="stat-info">
+                        <h3>تنبيهات نواقص المخزون</h3>
+                        <div class="stat-value" id="stat-low-stock-count">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Low Stock Alert Box -->
+            <div class="card-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-bell" style="color: #ef4444;"></i> تنبيهات الأصناف التي وصلت للحد الأدنى (تحتاج طلب توريد)</h2>
+                    <button class="btn-secondary" onclick="switchTab('tab-inventory')">
+                        <i class="fas fa-arrow-left"></i> الانتقال للجرد الشامل
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>اسم الصنف</th>
+                                <th>الباركود</th>
+                                <th>القسم</th>
+                                <th>الكمية المتبقية</th>
+                                <th>حد الإنذار بالمخزن</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dashboard-low-stock-list">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: SALES MOVEMENT & ANALYTICS -->
+        <section class="tab-pane" id="tab-sales">
+            <div class="card-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-chart-line" style="color: #2563eb;"></i> شاشة متابعة حركة المبيعات وتوزيع الشفتات</h2>
+                    <span class="badge info" id="sales-current-shift-badge">الشفت النشط: ☀️ نهاري</span>
+                </div>
+
+                <!-- Shift & Returns Overview Grid -->
+                <div class="sales-overview-grid">
+                    <div class="shift-card">
+                        <div class="shift-card-icon day"><i class="fas fa-sun"></i></div>
+                        <div>
+                            <span style="font-size: 0.8rem; color: #64748b; font-weight: 700;">مبيعات الشفت النهاري</span>
+                            <h3 id="sales-day-shift-total" style="color: #d97706; font-size: 1.3rem;">0.00 ج.م</h3>
+                            <small id="sales-day-shift-count" style="color: #94a3b8;">0 فاتورة</small>
+                        </div>
+                    </div>
+                    <div class="shift-card">
+                        <div class="shift-card-icon night"><i class="fas fa-moon"></i></div>
+                        <div>
+                            <span style="font-size: 0.8rem; color: #64748b; font-weight: 700;">مبيعات الشفت الليلي</span>
+                            <h3 id="sales-night-shift-total" style="color: #4f46e5; font-size: 1.3rem;">0.00 ج.م</h3>
+                            <small id="sales-night-shift-count" style="color: #94a3b8;">0 فاتورة</small>
+                        </div>
+                    </div>
+                    <div class="shift-card">
+                        <div class="shift-card-icon returns"><i class="fas fa-undo-alt"></i></div>
+                        <div>
+                            <span style="font-size: 0.8rem; color: #64748b; font-weight: 700;">إجمالي المرتجعات</span>
+                            <h3 id="sales-returns-total" style="color: #dc2626; font-size: 1.3rem;">0.00 ج.م</h3>
+                            <small id="sales-returns-count" style="color: #94a3b8;">0 عملية إرجاع</small>
+                        </div>
+                    </div>
+                    <div class="shift-card">
+                        <div class="shift-card-icon" style="background: #ecfdf5; color: #059669;"><i class="fas fa-tags"></i></div>
+                        <div>
+                            <span style="font-size: 0.8rem; color: #64748b; font-weight: 700;">إجمالي الخصومات الممنوحة</span>
+                            <h3 id="sales-discounts-total" style="color: #059669; font-size: 1.3rem;">0.00 ج.م</h3>
+                            <small style="color: #94a3b8;">خصومات بنود وفواتير</small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Popular Items & Recent Sales in 2 columns -->
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+                    <div>
+                        <h3 style="font-size: 1rem; font-weight: 800; margin-bottom: 0.75rem; color: #1e293b;">
+                            <i class="fas fa-fire" style="color: #f59e0b;"></i> الأصناف الأكثر مبيعاً وشيوعاً (Popular Items)
+                        </h3>
+                        <div class="popular-products-list" id="sales-popular-list">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 style="font-size: 1rem; font-weight: 800; margin-bottom: 0.75rem; color: #1e293b;">
+                            <i class="fas fa-history" style="color: #2563eb;"></i> أحدث عمليات البيع حسب الشفت والكاشير
+                        </h3>
+                        <div class="table-responsive">
+                            <table class="data-table" style="font-size: 0.85rem;">
+                                <thead>
+                                    <tr>
+                                        <th>الفاتورة</th>
+                                        <th>الكاشير</th>
+                                        <th>الشفت</th>
+                                        <th>الإجمالي</th>
+                                        <th>الحالة</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sales-recent-orders-list">
+                                    <!-- Populated dynamically -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 3: CUSTOMER STORE & SHOPPING CART -->
+        <section class="tab-pane" id="tab-store">
+            <!-- Categories Filter Pills -->
+            <div class="category-pills" id="category-pills">
+                <!-- Populated dynamically -->
+            </div>
+
+            <!-- Search Bar -->
+            <div class="filter-bar">
+                <div class="search-input-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="ابحث عن صنف بالاسم أو الباركود أو الوصف..." oninput="handleSearch(this.value)">
+                </div>
+                <div style="font-weight: 700; color: #64748b; font-size: 0.9rem;">
+                    💡 تصفح الأقسام وأضف الأصناف لسلة مشترياتك ثم أتمم الطلب.
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="products-grid" id="products-grid">
+                <!-- Populated dynamically -->
+            </div>
+        </section>
+
+        <!-- TAB 4: POS (CASHIER POINT OF SALE) WITH CENTERED GRID & SHIFTS -->
+        <section class="tab-pane" id="tab-pos">
+            <div class="card-panel" style="margin-bottom: 1rem; padding: 1rem 1.5rem;">
+                <!-- POS Top Header: Shift, Cashier Name, and Quick Customer Register -->
+                <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 1rem;">
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <h2 style="font-size: 1.2rem; font-weight: 900; color: var(--dark); margin: 0;">
+                            <i class="fas fa-cash-register" style="color: #10b981;"></i> شاشة نقطة البيع (POS)
+                        </h2>
+                        <!-- Cashier Name Stamp -->
+                        <span class="badge info" id="pos-cashier-name-badge">
+                            <i class="fas fa-user"></i> كاشير: محمد (شفت نهاري)
+                        </span>
+                        <!-- Shift Selector -->
+                        <div style="display: flex; align-items: center; gap: 6px;">
+                            <label style="font-size: 0.8rem; font-weight: 700; color: #64748b;">وقت الشفت:</label>
+                            <select id="pos-shift-select" onchange="handlePosShiftChange(this.value)" style="padding: 4px 10px; border-radius: var(--radius-sm); border: 1px solid var(--border); font-size: 0.85rem; font-weight: 700;">
+                                <option value="day">☀️ شفت نهاري (Day Shift)</option>
+                                <option value="night">🌙 شفت ليلي (Night Shift)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <button class="btn-secondary" style="padding: 6px 12px; font-size: 0.85rem;" onclick="openRegisterCustomerModal()">
+                            <i class="fas fa-user-plus"></i> تسجيل عميل جديد
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories Bar including Popular Products -->
+            <div class="pos-categories-container" id="pos-categories-bar">
+                <!-- Populated dynamically: All, Popular ⭐, Grocery, Meat, Dairy... -->
+            </div>
+
+            <!-- Barcode & Search Input in POS -->
+            <div class="filter-bar" style="margin-bottom: 1rem;">
+                <div class="search-input-box" style="max-width: 480px;">
+                    <i class="fas fa-barcode"></i>
+                    <input type="text" id="pos-barcode-input" placeholder="امسح الباركود واضغط Enter أو اختر من الأصناف أدناه..." onkeydown="if(event.key==='Enter') handlePosBarcode(this.value)">
+                </div>
+                <button class="btn-primary" onclick="handlePosBarcode(document.getElementById('pos-barcode-input').value)">
+                    <i class="fas fa-plus"></i> إضافة بالباركود
+                </button>
+            </div>
+
+            <!-- Modern POS Layout: Left is Products Quick Grid, Right/Center is the INVOICE GRID -->
+            <div class="pos-layout-modern">
+                <!-- 1. Center / Main: Invoice Items Grid (واضحة في شكل Grid منظم مع الخصم لكل صنف) -->
+                <div class="card-panel" style="margin-bottom: 0;">
+                    <div class="panel-header" style="margin-bottom: 0.75rem;">
+                        <h3 style="font-size: 1.05rem; font-weight: 800; color: #1e293b;">
+                            <i class="fas fa-shopping-basket" style="color: #10b981;"></i> بنود الفاتورة الحالية (Current Bill Items)
+                        </h3>
+                        <button class="btn-secondary" style="padding: 4px 10px; font-size: 0.8rem; color: #ef4444;" onclick="clearPosCart()">
+                            <i class="fas fa-trash-alt"></i> إفراغ الفاتورة
+                        </button>
+                    </div>
+
+                    <!-- Items Grid Table -->
+                    <div class="table-responsive" style="max-height: 380px; overflow-y: auto;">
+                        <table class="pos-items-table">
+                            <thead>
+                                <tr>
+                                    <th>الصنف والباركود</th>
+                                    <th>سعر الوحدة</th>
+                                    <th style="text-align: center;">الكمية</th>
+                                    <th style="text-align: center;">خصم الصنف</th>
+                                    <th>الإجمالي الصافي</th>
+                                    <th style="text-align: center;">حذف</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pos-cart-table-body">
+                                <!-- Dynamic Grid Items -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Bill Calculation & Summary Area -->
+                    <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem; margin-top: 1rem;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 0.75rem;">
+                            <!-- Customer Selection -->
+                            <div class="form-group">
+                                <label style="font-size: 0.8rem; font-weight: 700;">العميل:</label>
+                                <select id="pos-customer-select" style="padding: 6px 10px; font-size: 0.85rem;">
+                                    <option value="">عميل نقدي (زائر)</option>
+                                    <!-- Populated dynamically -->
+                                </select>
+                            </div>
+                            <!-- Payment Method -->
+                            <div class="form-group">
+                                <label style="font-size: 0.8rem; font-weight: 700;">طريقة الدفع:</label>
+                                <select id="pos-payment-method" style="padding: 6px 10px; font-size: 0.85rem;">
+                                    <option value="cash">نقداً (Cash)</option>
+                                    <option value="card">بطاقة بنكية / مدى (Card)</option>
+                                    <option value="online">دفع إلكتروني (Online)</option>
+                                </select>
+                            </div>
+                            <!-- General Invoice Discount -->
+                            <div class="form-group">
+                                <label style="font-size: 0.8rem; font-weight: 700;">خصم إضافي على الفاتورة كلها:</label>
+                                <div style="display: flex; gap: 4px; align-items: center;">
+                                    <input type="number" id="pos-invoice-discount-input" value="0" min="0" step="0.5" style="padding: 6px 10px; font-size: 0.85rem; font-weight: 700; color: #ef4444;" oninput="renderPosCartGrid()">
+                                    <span style="font-size: 0.85rem; font-weight: 700; color: #64748b;" class="currency-tag">ج.م</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Summary Rows -->
+                        <div class="pos-summary" style="margin-top: 0.5rem;">
+                            <div class="pos-summary-row">
+                                <span>المجموع قبل الخصومات:</span>
+                                <strong id="pos-subtotal">0.00 ج.م</strong>
+                            </div>
+                            <div class="pos-summary-row" style="color: #ef4444;">
+                                <span>إجمالي خصومات الأصناف:</span>
+                                <strong id="pos-total-item-discounts">-0.00 ج.م</strong>
+                            </div>
+                            <div class="pos-summary-row" style="color: #dc2626;">
+                                <span>خصم الفاتورة الإجمالي:</span>
+                                <strong id="pos-invoice-discount-display">-0.00 ج.م</strong>
+                            </div>
+                            <div class="pos-summary-row">
+                                <span>ضريبة القيمة المضافة (15%):</span>
+                                <strong id="pos-tax">0.00 ج.م</strong>
+                            </div>
+                            <div class="pos-summary-row total">
+                                <span>المبلغ النهائي المطلوب:</span>
+                                <span id="pos-total" style="color: #10b981; font-size: 1.4rem;">0.00 ج.م</span>
+                            </div>
+                        </div>
+
+                        <button class="pos-checkout-btn" style="margin-top: 1rem;" onclick="checkoutPos()">
+                            <i class="fas fa-print"></i> إصدار وطباعة الفاتورة
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. Right: Quick Products Catalog Cards (Filtered by selected category / Popular) -->
+                <div>
+                    <h3 style="font-size: 1rem; font-weight: 800; color: #1e293b; margin-bottom: 0.75rem;">
+                        <i class="fas fa-boxes" style="color: #2563eb;"></i> كتالوج الأصناف السريع
+                    </h3>
+                    <div class="products-grid" id="pos-products-grid" style="grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); max-height: 650px; overflow-y: auto; padding: 4px;">
+                        <!-- POS Products Cards -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: PRODUCTS ENTRY & PRICING -->
+        <section class="tab-pane" id="tab-products">
+            <!-- Add New Product Form -->
+            <div class="card-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-plus-circle" style="color: #10b981;"></i> شاشة إدخال صنف جديد وتصنيفه بالأقسام</h2>
+                    <span class="badge info">يدعم حفظ وتحديث البيانات في Microsoft SQL Server 2025</span>
+                </div>
+
+                <form id="add-product-form" onsubmit="handleAddProduct(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>اسم الصنف / المنتج <span style="color:red">*</span></label>
+                            <input type="text" id="new-prod-name" placeholder="مثال: حليب المراعي 2 لتر كامل الدسم" required>
+                        </div>
+                        <div class="form-group">
+                            <label>الباركود (Barcode) <span style="color:red">*</span></label>
+                            <div style="display: flex; gap: 6px;">
+                                <input type="text" id="new-prod-barcode" placeholder="امسح أو أدخل الباركود" required style="flex:1;">
+                                <button type="button" class="btn-secondary" style="padding: 0 10px;" onclick="generateRandomBarcode()" title="توليد باركود تلقائي">
+                                    <i class="fas fa-magic"></i> توليد
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>القسم / التصنيف <span style="color:red">*</span></label>
+                            <select id="prod-category-select" required>
+                                <!-- Categories dynamically loaded -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>وحدة القياس</label>
+                            <select id="new-prod-unit">
+                                <option value="حبة">حبة (Piece)</option>
+                                <option value="كجم">كيلوجرام (Kg)</option>
+                                <option value="لتر">لتر (Liter)</option>
+                                <option value="كيس">كيس (Bag)</option>
+                                <option value="كرتون">كرتون (Carton)</option>
+                                <option value="علبة">علبة (Pack)</option>
+                                <option value="طبق">طبق (Tray)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>سعر التكلفة (الشراء) <span class="currency-tag">ج.م</span></label>
+                            <input type="number" id="new-prod-cost" step="0.25" min="0" placeholder="0.00" required>
+                        </div>
+                        <div class="form-group">
+                            <label>سعر البيع للجمهور <span class="currency-tag">ج.م</span> <span style="color:red">*</span></label>
+                            <input type="number" id="new-prod-price" step="0.25" min="0" placeholder="0.00" required>
+                        </div>
+                        <div class="form-group">
+                            <label>الكمية المتوفرة بالمخزن</label>
+                            <input type="number" id="new-prod-stock" min="0" value="20" required>
+                        </div>
+                        <div class="form-group">
+                            <label>حد الإنذار بنقص المخزون</label>
+                            <input type="number" id="new-prod-min-stock" min="1" value="5" required>
+                        </div>
+                        <div class="form-group" style="display: flex; align-items: center; gap: 8px; margin-top: 1.5rem;">
+                            <input type="checkbox" id="new-prod-popular" style="width: 18px; height: 18px; cursor: pointer;">
+                            <label for="new-prod-popular" style="margin: 0; cursor: pointer; font-weight: 700;">تعيين كـ "صنف شائع الاستخدام / الأكثر طلباً" ⭐</label>
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>رابط صورة المنتج (Image URL)</label>
+                            <input type="url" id="new-prod-image" placeholder="https://example.com/product.jpg">
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>وصف تفصيلي للصنف</label>
+                            <textarea id="new-prod-desc" rows="2" placeholder="أدخل تفاصيل ومواصفات المنتج..."></textarea>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="reset" class="btn-secondary">إعادة تعيين</button>
+                        <button type="submit" class="btn-primary" id="btn-save-product">
+                            <i class="fas fa-save"></i> حفظ وإضافة الصنف للنظام
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Products Catalog Table -->
+            <div class="card-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-list"></i> قائمة جميع الأصناف المسجلة بالنظام</h2>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>اسم الصنف</th>
+                                <th>الباركود</th>
+                                <th>القسم</th>
+                                <th>سعر التكلفة</th>
+                                <th>سعر البيع</th>
+                                <th>المخزون الحالي</th>
+                                <th>شائع؟</th>
+                                <th>إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="products-table-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 6: INVENTORY AUDIT & STOCK COUNT -->
+        <section class="tab-pane" id="tab-inventory">
+            <div class="card-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-warehouse" style="color: #2563eb;"></i> جرد الأصناف وتدقيق المخزون (Inventory Audit)</h2>
+                    <span class="badge info">تسوية الفروقات ومتابعة المرتجعات في SQL Server</span>
+                </div>
+                <p style="color: #64748b; margin-bottom: 1rem; font-size: 0.9rem;">
+                    يتيح لك هذا الجدول مطابقة الرصيد الدفتري المسجل في قاعدة البيانات مع الجرد الفعلي على الأرفف، وتسجيل الفروقات والكميات المرتجعة من العملاء.
+                </p>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>اسم الصنف</th>
+                                <th>الباركود</th>
+                                <th>القسم</th>
+                                <th>الكمية المتوفرة</th>
+                                <th>حد الطلب</th>
+                                <th>قيمة التكلفة</th>
+                                <th>قيمة البيع</th>
+                                <th>تسوية الجرد</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventory-audit-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Inventory Movement Logs -->
+            <div class="card-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-history"></i> سجل حركات وتدقيق المخزون والمرتجعات (Audit Logs)</h2>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>اسم الصنف</th>
+                                <th>نوع الحركة</th>
+                                <th>التغير بالكمية</th>
+                                <th>المخزون السابق</th>
+                                <th>المخزون الجديد</th>
+                                <th>السبب والبيان</th>
+                                <th>التاريخ والتوقيت</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventory-logs-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 7: INVOICES & ORDERS WITH RETURNS -->
+        <section class="tab-pane" id="tab-orders">
+            <div class="card-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-receipt" style="color: #10b981;"></i> سجل فواتير المبيعات وإدارة المرتجعات</h2>
+                    <span class="badge success">دعم استرجاع الفاتورة بالكامل أو بعض الأصناف وتحديث المخزون فورياً</span>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>رقم الفاتورة</th>
+                                <th>العميل</th>
+                                <th>الكاشير المسؤول</th>
+                                <th>الشفت</th>
+                                <th>إجمالي الفاتورة</th>
+                                <th>طريقة الدفع</th>
+                                <th>حالة الفاتورة</th>
+                                <th>تاريخ الفاتورة</th>
+                                <th>إجراءات ومعاينة</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 8: USERS & PERMISSIONS MANAGEMENT (ADMIN ONLY) -->
+        <section class="tab-pane" id="tab-users">
+            <div class="card-panel">
+                <div class="panel-header">
+                    <h2><i class="fas fa-users-cog" style="color: #4f46e5;"></i> إدارة المستخدمين وتحديد الصلاحيات</h2>
+                    <button class="btn-primary" onclick="openAddUserModal()">
+                        <i class="fas fa-user-plus"></i> إضافة مستخدم جديد
+                    </button>
+                </div>
+                <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 1rem;">
+                    المدير (Admin) يملك كامل الصلاحيات لإنشاء وحذف وتعديل صلاحيات الكاشير والعملاء، وتحديد من له حق إضافة المنتجات أو تسعيرها أو حذفها أو عمل الجرد.
+                </p>
+
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>الاسم الكامل</th>
+                                <th>اسم المستخدم / البريد</th>
+                                <th>نوع الدور</th>
+                                <th>رقم الهاتف</th>
+                                <th>الصلاحيات الممنوحة</th>
+                                <th>الحالة</th>
+                                <th>إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="users-table-body">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 9: SYSTEM SETTINGS (ADMIN ONLY) -->
+        <section class="tab-pane" id="tab-settings">
+            <div class="settings-section-card">
+                <h3 class="settings-section-title">
+                    <i class="fas fa-store" style="color: #10b981;"></i> إعدادات السوبرماركت والهوية
+                </h3>
+                <form id="settings-form" onsubmit="handleSaveSettings(event)">
+                    <div class="form-grid">
+                        <div class="form-group" style="grid-column: span 2;">
+                            <label>اسم السوبرماركت / المتجر <span style="color:red">*</span></label>
+                            <input type="text" id="setting-supermarket-name" placeholder="سوبرماركت السعادة الحديث" required>
+                        </div>
+                        <div class="form-group">
+                            <label>الرقم الضريبي</label>
+                            <input type="text" id="setting-tax-number" placeholder="300123456700003">
+                        </div>
+                        <div class="form-group">
+                            <label>رقم الهاتف للتواصل</label>
+                            <input type="tel" id="setting-phone" placeholder="0501112233">
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>العنوان التجاري</label>
+                            <input type="text" id="setting-address" placeholder="شارع النصر التجاري، الفرع الرئيسي">
+                        </div>
+                    </div>
+
+                    <!-- Logo Settings -->
+                    <div style="margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+                        <h4 style="font-size: 1rem; font-weight: 800; margin-bottom: 0.75rem; color: #1e293b;">
+                            <i class="fas fa-image" style="color: #2563eb;"></i> شعار الشركة (Logo) للطباعة في الفواتير والتقارير
+                        </h4>
+                        <div style="display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap;">
+                            <div class="logo-preview-box" id="logo-preview-box">
+                                <i class="fas fa-store-alt" id="logo-placeholder-icon" style="font-size: 2.5rem; color: #94a3b8;"></i>
+                                <img id="logo-preview-img" src="" alt="Logo" style="display: none;">
+                            </div>
+                            <div style="flex: 1; min-width: 250px;">
+                                <label style="font-size: 0.85rem; font-weight: 700; color: #475569;">رابط الشعار (Image URL):</label>
+                                <input type="url" id="setting-logo-url" placeholder="https://example.com/logo.png" oninput="updateLogoPreview(this.value)" style="margin-bottom: 0.5rem;">
+                                <p style="font-size: 0.8rem; color: #64748b;">
+                                    💡 يمكنك إدخال رابط مباشر لشعار السوبرماركت ليظهر في الفاتورة المطبوعة وأعلى الشاشة.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Language & Currency Selection -->
+                    <div style="margin-top: 1.5rem; border-top: 1px solid var(--border); padding-top: 1.5rem;">
+                        <h4 style="font-size: 1rem; font-weight: 800; margin-bottom: 0.75rem; color: #1e293b;">
+                            <i class="fas fa-globe" style="color: #f59e0b;"></i> اللغة والعملة المستخدمة في النظام
+                        </h4>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>اختيار لغة النظام (Language) <span style="color:red">*</span></label>
+                                <select id="setting-language" required>
+                                    <option value="ar">العربية (Arabic - RTL)</option>
+                                    <option value="en">English (الإنجليزية - LTR)</option>
+                                    <option value="fr">Français (الفرنسية - LTR)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>اختيار العملة المستخدمة في النظام <span style="color:red">*</span></label>
+                                <select id="setting-currency" required>
+                                    <option value="ج.م">ج.م (الجنيه المصري - EGP)</option>
+                                    <option value="ر.س">ر.س (الريال السعودي - SAR)</option>
+                                    <option value="$">$ (الدولار الأمريكي - USD)</option>
+                                    <option value="€">€ (اليورو الأوروبي - EUR)</option>
+                                    <option value="د.إ">د.إ (الدرهم الإماراتي - AED)</option>
+                                    <option value="د.ك">د.ك (الدينار الكويتي - KWD)</option>
+                                    <option value="د.أ">د.أ (الدينار الأردني - JOD)</option>
+                                    <option value="د.م">د.م (الدرهم المغربي - MAD)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions" style="margin-top: 1.5rem;">
+                        <button type="submit" class="btn-primary">
+                            <i class="fas fa-save"></i> حفظ وتطبيق الإعدادات فورياً
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- 6. MODALS -->
+
+    <!-- Customer Cart Drawer -->
+    <div class="cart-drawer" id="cart-drawer">
+        <div class="cart-drawer-header">
+            <h3><i class="fas fa-shopping-cart" style="color: #10b981;"></i> سلة مشتريات العميل</h3>
+            <button class="modal-close" onclick="toggleCartDrawer()">&times;</button>
+        </div>
+        <div class="cart-drawer-body" id="cart-drawer-items">
+            <!-- Dynamic Cart Items -->
+        </div>
+        <div class="cart-drawer-footer" id="cart-drawer-summary">
+            <!-- Dynamic Cart Summary -->
+        </div>
+    </div>
+
+    <!-- Stock Adjustment Modal -->
+    <div class="modal-overlay" id="audit-modal">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fas fa-clipboard-check"></i> تسوية جرد الصنف</h3>
+                <button class="modal-close" onclick="closeAuditModal()">&times;</button>
+            </div>
+            <form onsubmit="handleSaveAudit(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="audit-prod-id">
+                    <div style="margin-bottom: 1rem;">
+                        <h4 id="audit-prod-name" style="font-size: 1.1rem; color: #1e293b;"></h4>
+                        <p style="color: #64748b; font-size: 0.9rem;">الرصيد الدفتري الحالي بالنظام: <strong id="audit-current-stock" style="color: #2563eb;"></strong></p>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label>الكمية الفعلية المحصورة بعد الجرد <span style="color:red">*</span></label>
+                        <input type="number" id="audit-new-count" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>سبب التسوية أو التعديل <span style="color:red">*</span></label>
+                        <select id="audit-reason">
+                            <option value="جرد دوري بالمخزن">جرد دوري بالمخزن (Routine stock audit)</option>
+                            <option value="تلفيات تبريد أو انتهاء صلاحية">تلفيات تبريد أو انتهاء صلاحية (Damaged/Expired)</option>
+                            <option value="تسوية فروقات ميزان">تسوية فروقات ميزان (Scale discrepancy)</option>
+                            <option value="توريد واستلام شحنة إضافية">توريد واستلام شحنة إضافية (Incoming shipment)</option>
+                            <option value="مرتجع من عميل">مرتجع من عميل (Customer return)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeAuditModal()">إلغاء</button>
+                    <button type="submit" class="btn-primary">حفظ وتحديث الرصيد</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Return Invoice / Items Modal -->
+    <div class="modal-overlay" id="return-modal">
+        <div class="modal-card" style="max-width: 650px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-undo-alt" style="color: #ef4444;"></i> إرجاع فاتورة أو بنود محددة وتحديث المخزون</h3>
+                <button class="modal-close" onclick="closeReturnModal()">&times;</button>
+            </div>
+            <form onsubmit="handleConfirmReturn(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="return-order-id">
+                    <div style="background: #f8fafc; border: 1px solid var(--border); padding: 0.75rem 1rem; border-radius: var(--radius-sm); margin-bottom: 1rem; font-size: 0.9rem;">
+                        <div><strong>رقم الفاتورة:</strong> <span id="return-invoice-no"></span></div>
+                        <div><strong>العميل:</strong> <span id="return-customer-name"></span> | <strong>الكاشير:</strong> <span id="return-cashier-name"></span></div>
+                    </div>
+
+                    <div class="form-group" style="margin-bottom: 1rem;">
+                        <label>نوع الإرجاع:</label>
+                        <select id="return-type-select" onchange="handleReturnTypeChange(this.value)">
+                            <option value="full">إرجاع كامل الفاتورة واسترداد المبلغ بالكامل</option>
+                            <option value="partial">إرجاع أصناف وكميات محددة فقط</option>
+                        </select>
+                    </div>
+
+                    <!-- Items selection table for partial return -->
+                    <div id="return-items-selection-box">
+                        <label style="font-size: 0.85rem; font-weight: 700; margin-bottom: 4px; display: block;">حدد الكمية المراد إرجاعها لكل صنف:</label>
+                        <div class="table-responsive" style="max-height: 220px; overflow-y: auto;">
+                            <table class="data-table" style="font-size: 0.85rem;">
+                                <thead>
+                                    <tr>
+                                        <th>الصنف</th>
+                                        <th>الكمية المشتراة</th>
+                                        <th>سعر الوحدة</th>
+                                        <th>الكمية المرتجعة</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="return-items-table-body">
+                                    <!-- Dynamic rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1rem;">
+                        <label>سبب الإرجاع <span style="color:red">*</span></label>
+                        <select id="return-reason-select" required>
+                            <option value="استبدال أو استرجاع برغبة العميل">استبدال أو استرجاع برغبة العميل</option>
+                            <option value="عيب مصنعي أو كسر في المنتج">عيب مصنعي أو كسر في المنتج</option>
+                            <option value="تلف أو انتهاء الصلاحية">تلف أو انتهاء الصلاحية</option>
+                            <option value="خطأ كاشير في إدخال الصنف">خطأ كاشير في إدخال الصنف</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeReturnModal()">إلغاء</button>
+                    <button type="submit" class="btn-primary" style="background: #dc2626; border-color: #dc2626;">
+                        <i class="fas fa-check"></i> تأكيد الإرجاع وإعادة الكمية للمخزون
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- User & Permissions Modal (Add / Edit User) -->
+    <div class="modal-overlay" id="user-modal">
+        <div class="modal-card" style="max-width: 600px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-shield" style="color: #4f46e5;"></i> <span id="user-modal-title">إضافة / تعديل مستخدم وتحديد الصلاحيات</span></h3>
+                <button class="modal-close" onclick="closeUserModal()">&times;</button>
+            </div>
+            <form onsubmit="handleSaveUser(event)">
+                <div class="modal-body">
+                    <input type="hidden" id="user-edit-id">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>الاسم الكامل <span style="color:red">*</span></label>
+                            <input type="text" id="user-input-name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>اسم المستخدم (Login Username) <span style="color:red">*</span></label>
+                            <input type="text" id="user-input-username" required>
+                        </div>
+                        <div class="form-group">
+                            <label>البريد الإلكتروني <span style="color:red">*</span></label>
+                            <input type="email" id="user-input-email" required>
+                        </div>
+                        <div class="form-group">
+                            <label>كلمة المرور <span style="color:red">*</span></label>
+                            <input type="text" id="user-input-password" required>
+                        </div>
+                        <div class="form-group">
+                            <label>نوع الدور الأساسي <span style="color:red">*</span></label>
+                            <select id="user-input-role" onchange="handleRolePresetChange(this.value)" required>
+                                <option value="admin">مدير (Admin) - كل الصلاحيات</option>
+                                <option value="cashier">بائع كاشير (Cashier) - نقطة البيع</option>
+                                <option value="customer">عميل (Customer) - تسوق فقط</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>رقم الهاتف</label>
+                            <input type="tel" id="user-input-phone">
+                        </div>
+                    </div>
+
+                    <!-- Granular Permissions Checkboxes -->
+                    <div style="margin-top: 1.25rem;">
+                        <label style="font-weight: 800; color: #1e293b; font-size: 0.95rem;">
+                            <i class="fas fa-key" style="color: #f59e0b;"></i> تفصيل الصلاحيات الدقيقة للمستخدم:
+                        </label>
+                        <div class="permissions-grid">
+                            <label class="permission-checkbox-card">
+                                <input type="checkbox" id="perm-add-product">
+                                <div>
+                                    <strong>إضافة منتجات جديدة</strong>
+                                    <p style="font-size: 0.75rem; color: #64748b;">إمكانية إدخال أصناف وتصنيفها</p>
+                                </div>
+                            </label>
+                            <label class="permission-checkbox-card">
+                                <input type="checkbox" id="perm-edit-price">
+                                <div>
+                                    <strong>تسعير وتعديل الأصناف</strong>
+                                    <p style="font-size: 0.75rem; color: #64748b;">تعديل أسعار الشراء والبيع</p>
+                                </div>
+                            </label>
+                            <label class="permission-checkbox-card">
+                                <input type="checkbox" id="perm-delete-product">
+                                <div>
+                                    <strong>حذف الأصناف</strong>
+                                    <p style="font-size: 0.75rem; color: #64748b;">حذف المنتجات من النظام</p>
+                                </div>
+                            </label>
+                            <label class="permission-checkbox-card">
+                                <input type="checkbox" id="perm-audit-inventory">
+                                <div>
+                                    <strong>جرد المخزون وتسويه الفروقات</strong>
+                                    <p style="font-size: 0.75rem; color: #64748b;">مطابقة الجرد الفعلي والدفتري</p>
+                                </div>
+                            </label>
+                            <label class="permission-checkbox-card">
+                                <input type="checkbox" id="perm-process-returns">
+                                <div>
+                                    <strong>إجراء المرتجعات</strong>
+                                    <p style="font-size: 0.75rem; color: #64748b;">استرجاع الفواتير والأصناف</p>
+                                </div>
+                            </label>
+                            <label class="permission-checkbox-card">
+                                <input type="checkbox" id="perm-manage-settings">
+                                <div>
+                                    <strong>إدارة إعدادات النظام</strong>
+                                    <p style="font-size: 0.75rem; color: #64748b;">تغيير اسم السوبرماركت واللغة والعملة</p>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" onclick="closeUserModal()">إلغاء</button>
+                    <button type="submit" class="btn-primary">حفظ المستخدم</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Printable Invoice Receipt Modal -->
+    <div class="modal-overlay" id="invoice-modal">
+        <div class="modal-card" style="max-width: 460px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-file-invoice"></i> فاتورة المشتريات</h3>
+                <button class="modal-close" onclick="closeInvoiceModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="invoice-receipt" id="invoice-receipt-content">
+                    <!-- Thermal Receipt Dynamic Output -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="closeInvoiceModal()">إغلاق</button>
+                <button class="btn-primary" onclick="printCurrentInvoice()">
+                    <i class="fas fa-print"></i> طباعة الفاتورة
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notification Toast Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Application Scripts -->
+    <script src="js/data.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

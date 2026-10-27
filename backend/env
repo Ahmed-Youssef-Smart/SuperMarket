@@ -1,0 +1,20 @@
+PORT=5000
+NODE_ENV=development
+
+# Microsoft SQL Server Configuration (databaseasp.net)
+DB_TYPE=mssql
+DB_HOST=db76122.public.databaseasp.net
+DB_PORT=1433
+DB_USER=db76122
+# كلمة المرور بين علامتي تنصيص لأنها تحتوي على # و @
+DB_PASSWORD="Nw5_6Y#yh7A@"
+DB_NAME=db76122
+
+# SSL / Connection options
+DB_ENCRYPT=true
+DB_TRUST_SERVER_CERTIFICATE=true
+DB_MULTIPLE_ACTIVE_RESULT_SETS=true
+
+# Security
+JWT_SECRET=supermarket_super_secret_jwt_key_2026
+JWT_EXPIRES_IN=7d
